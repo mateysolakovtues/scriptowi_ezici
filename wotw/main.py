@@ -1,3 +1,4 @@
+import math
 import arcade
 import arcade.gui
 from pathlib import Path
@@ -28,6 +29,7 @@ DEATH_Y = -50
 # -- Asset paths ---------------------------------------------------------------
 SAMURAI_PATH = HERE / "assets/image/craftpix-net-123681-free-samurai-pixel-art-sprite-sheets/Samurai"
 KENNEY_TILES = HERE / "assets/image/kenney_pixel-platformer-food-expansion/Tiles"
+BG_IMAGE    = HERE / "assets/image/pixel-stars-set-night-sky-background_107791-34629.avif"
 
 # -- Attack keys ---------------------------------------------------------------
 ATTACK_KEYS = {
@@ -38,11 +40,21 @@ ATTACK_KEYS = {
 
 # -- Level map -----------------------------------------------------------------
 _LEVEL = [
-    "                                                                                 ",
-    "                              HHHHHHHHHHHHHHHHHHHHHHHHHH             FFF         ",
-    "         FFF           FFF               FFF             FFF                     ",
-    " P          SSS                 SSSSS          SSS            SSS       SS       ",
-    "BBBBBBBBBB   BBBBBBB  BBBBB  BBBBB  BBBBBBBBB   BB   BBBBB   BBBBBBB  BBBBBBBBBBB",
+    "                                                                                ",  
+    "                                                                                ",  
+    "                                                 HHHHH                          ",  
+    "                         FFF                    H     H                         ",  
+    "                                               H       H                        ",  
+    "                FFF                           H  S S S  H                       ",  
+    "                                             HHHHHHHHHHHH                       ",  
+    "         FFF                                                                    ",  
+    "                                    FFFFF                                       ",  
+    "    P                      HHH                                  HHHH            ",  
+    "   FFF                    H   H                                H    H           ",  
+    "                         H     H      S   S                   H      H          ",  
+    "                        H       H   BBBBBBBBB                H        H         ",  
+    "       S    S          H         H                          H          S   S    ",  
+    "BBBBBBBBBBBBBBBB   BBBB           BBBBBBBBBBBB   BBBBBBBBBBB            BBBBBBBB",  
 ]
 _W       = max(len(r) for r in _LEVEL)
 MAP_GRID = [r.ljust(_W) for r in _LEVEL]
@@ -63,6 +75,7 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(title=SCREEN_TITLE, fullscreen=True)
 
+        self.bg_sprites    = None
         self.player_list   = None
         self.wall_list     = None
         self.platform_list = None
@@ -193,10 +206,25 @@ class MyGame(arcade.Window):
         self.level_width  = len(MAP_GRID[0]) * tile_size
         level_height      = len(MAP_GRID) * tile_size
 
+        self.bg_sprites    = arcade.SpriteList()
         self.player_list   = arcade.SpriteList()
         self.wall_list     = arcade.SpriteList()
         self.platform_list = arcade.SpriteList()
         self.decor_list    = arcade.SpriteList()
+
+        try:
+            bg_tex = arcade.load_texture(BG_IMAGE)
+            cols = math.ceil(self.level_width / bg_tex.width)  + 1
+            rows = math.ceil(H              / bg_tex.height) + 1
+            for row in range(rows):
+                for col in range(cols):
+                    s = arcade.Sprite()
+                    s.texture   = bg_tex
+                    s.center_x  = col * bg_tex.width  + bg_tex.width  / 2
+                    s.center_y  = row * bg_tex.height + bg_tex.height / 2
+                    self.bg_sprites.append(s)
+        except Exception:
+            pass
 
         self.slash_draw = self._try_load_sound(
             HERE / "assets/sounds/484298__giddster__drawing-sword-from-scabbard.wav"
@@ -295,6 +323,7 @@ class MyGame(arcade.Window):
 
         # ── World (scrolling camera) ──────────────────────────────────────────
         self.camera.use()
+        self.bg_sprites.draw()
         self.wall_list.draw()
         self.platform_list.draw()
         self.decor_list.draw()
@@ -403,3 +432,5 @@ if __name__ == "__main__":
     window = MyGame()
     window.setup()
     arcade.run()
+    print ("Goodbye!")
+    print ("Thanks for playing Wok of the Warrior!")
