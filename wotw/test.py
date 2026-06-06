@@ -143,7 +143,18 @@ class SlimeEnemy(arcade.Sprite):
         self._frame      = 0
         self._tick       = 0
 
-    def update_patrol(self):
+    def update_patrol(self, wall_list, platform_list):
+        # Probe just below the leading edge; reverse if no tile is there.
+        lead    = 1 if self.change_x >= 0 else -1
+        probe_x = self.center_x + lead * SLIME_SCALE * 20
+        probe_y = self.center_y - int(SLIME_SCALE * SLIME_FOOT_OFFSET) - 4
+        has_ground = (
+            arcade.get_sprites_at_point((probe_x, probe_y), wall_list) or
+            arcade.get_sprites_at_point((probe_x, probe_y), platform_list)
+        )
+        if not has_ground:
+            self.change_x *= -1
+
         self.center_x += self.change_x
         if abs(self.center_x - self._spawn_x) >= SLIME_PATROL:
             self.change_x *= -1
@@ -553,7 +564,7 @@ class MyGame(arcade.Window):
             return
 
         for enemy in self.enemy_list:
-            enemy.update_patrol()
+            enemy.update_patrol(self.wall_list, self.platform_list)
 
         self._check_enemy_collisions()
         if self.game_state != "playing":
