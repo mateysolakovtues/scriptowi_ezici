@@ -23,8 +23,24 @@ DEATH_Y = -50
 
 SAMURAI_PATH = HERE / "assets/image/craftpix-net-123681-free-samurai-pixel-art-sprite-sheets/Samurai"
 KENNEY_TILES = HERE / "assets/image/kenney_pixel-platformer-food-expansion/Tiles"
-BG_IMAGE     = HERE / "assets/image/pixel-stars-set-night-sky-background_107791-34629.avif"
+# ── UPDATED BACKGROUND IMAGE PATH ──
+BG_IMAGE     = HERE / "assets/image/360_F_1504035261_KQEBa5gLMegqUHn6ndz1YC5m4NRYetTl.jpg"
 SLIME_BASE   = HERE / "assets/enemy/craftpix-net-788364-free-slime-mobs-pixel-art-top-down-sprite-pack/PNG"
+
+ATTACK_KEYS = {
+    arcade.key.Z: 0, arcade.key.J: 0,
+    arcade.key.X: 1, arcade.key.K: 1,
+    arcade.key.C: 2, arcade.key.L: 2,
+}
+
+TILE_CHARS = {
+    "B": "tile_0000.png",          
+    "F": "tile_0040.png",          
+    "H": "tile_0020.png",          
+}
+WALL_TILES = {"B", "H"}
+PLATFORM_TILES = {"F"}
+DECOR_TILES = set()
 
 SLIME_FRAME_W     = 64
 SLIME_FRAME_H     = 64
@@ -34,12 +50,6 @@ SWORD_REACH_X     = 90
 SWORD_REACH_Y     = 60
 SLIME_FOOT_OFFSET = 8
 
-ATTACK_KEYS = {
-    arcade.key.Z: 0, arcade.key.J: 0,
-    arcade.key.X: 1, arcade.key.K: 1,
-    arcade.key.C: 2, arcade.key.L: 2,
-}
-
 def _make_grid(rows):
     w = max(len(r) for r in rows)
     return [r.ljust(w) for r in rows]
@@ -47,89 +57,79 @@ def _make_grid(rows):
 LEVELS = {
     1: {
         "grid": _make_grid([
-            "                                                                                ",
-            "                                                                                ",
-            "                                                 HHHHH                          ",
-            "                         FFF                    H     H                         ",
-            "                                               H       H                        ",
-            "                FFF                           H  S S S  H                       ",
-            "                                             HHHHHHHHHHHH                       ",
-            "         FFF                                                                    ",
-            "                                    FFFFF                                       ",
-            "    P                      HHH                                  HHHH            ",
-            "   FFF                    H   H                                H    H           ",
-            "                         H     H      S   S                   H      H          ",
-            "                        H       H   BBBBBBBBB                H        H         ",
-            "       S    S          H         H                          H          S   S    ",
-            "BBBBBBBBBBBBBBBB   BBBB           BBBBBBBBBBBB   BBBBBBBBBBB            BBBBBBBB",
+            "                                                                                        ",  # 0
+            "                                                                                        ",  # 1
+            "                                                                                        ",  # 2
+            "                                                                                        ",  # 3
+            "                                                                                        ",  # 4
+            "                  FFF                   HHHH                  FFFF                      ",  # 5
+            "                                                                                        ",  # 6
+            "                                                                                        ",  # 7
+            "                FFFF               FFFFF                  FFFF                  HHHH    ",  # 8
+            "                                                                                        ",  # 9
+            "                    BBBBB                              BBBBBB                          ",  # 10
+            "                    BBBBB                              BBBBBB                          ",  # 11
+            "  P                 BBBBB                              BBBBBB                          ",  # 12
+            "BBBBBBBBB   BBBBBBBBBBBBBBB    BBBBBBBBBBBBBB    BBBBBBBBBBBBBBBBB    BBBBBBBBBBBBBBBBBB",  # 13
+            "BBBBBBBBB   BBBBBBBBBBBBBBB    BBBBBBBBBBBBBB    BBBBBBBBBBBBBBBBB    BBBBBBBBBBBBBBBBBB",  # 14
+            "BBBBBBBBB   BBBBBBBBBBBBBBB    BBBBBBBBBBBBBB    BBBBBBBBBBBBBBBBB    BBBBBBBBBBBBBBBBBB",  # 15
         ]),
         "enemies": [
-            ( 8, 14, 1), (12, 14, 2),
-            (37, 14, 1), (42, 14, 3),
-            (52, 14, 2), (57, 14, 1),
-            (74, 14, 3),
-            (10,  7, 2),
-            (38,  8, 1),
-            (40, 12, 3),
+            ( 6, 13, 1),
+            (16, 13, 2),
+            (22, 13, 1),
+            (35, 13, 3),
+            (41, 13, 2),
+            (54, 13, 1),
+            (60, 13, 3),
+            (64, 13, 2),
+            (75, 13, 1),
+            (82, 13, 3),
+            (22, 10, 2),
+            (57, 10, 1),
+            (17,  8, 1),   
+            (37,  8, 3),
         ],
     },
+
     2: {
         "grid": _make_grid([
-            "                FFFFF                                H      H                   ",
-            "                                                    H   S    H                  ",
-            "         FFF             FFF                       H   BBBB   H                 ",
-            "                                                  H            H                ",
-            "    P                                            H              H               ",
-            "   BBB    S   S         S    S                  H                H              ",
-            "   BBBB  BBBBBBB       BBBBBBBB     FFFFF      H                  H             ",
-            "   BBBB  BBBBBBB       BBBBBBBB               H                    H            ",
-            "   BBBB  BBBBBBB  SSS  BBBBBBBB  S         S H                      H S    S     ",
-            "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBBBBB   BBBBBBBBBBBBBBBBBB",
+            "                                                                                        ",  # 0
+            "                                                                                        ",  # 1
+            "                                                                                        ",  # 2
+            "                                                                                        ",  # 3
+            "                                                                                        ",  # 4
+            "                  HHHH                  FFFFF                    HHHH                   ",  # 5
+            "                                                                                        ",  # 6
+            "                                                                                        ",  # 7
+            "         FFFF          FFFFF        HHHHHHHH            FFFFFF         FFFFF            ",  # 8
+            "                                                                                        ",  # 9
+            "               BBBBBBBB                        BBBBBBBB                                 ",  # 10
+            "               BBBBBBBB                        BBBBBBBB                                 ",  # 11
+            "  P            BBBBBBBB                        BBBBBBBB                                 ",  # 12
+            "BBBBBBBB    BBBBBBBBBBB    BBBBBBBBB        BBBBBBBBBBBB     BBBBBBBBBB    BBBBBBBBBBBBB",  # 13
+            "BBBBBBBB    BBBBBBBBBBB    BBBBBBBBB        BBBBBBBBBBBB     BBBBBBBBBB    BBBBBBBBBBBBB",  # 14
+            "BBBBBBBB    BBBBBBBBBBB    BBBBBBBBB        BBBBBBBBBBBB     BBBBBBBBBB    BBBBBBBBBBBBB",  # 15
         ]),
         "enemies": [
-            (15, 9, 1), (25, 9, 2),
-            (45, 9, 3), (50, 9, 1),
-            (68, 9, 2), (73, 9, 3),
-            ( 5, 6, 1), (12, 6, 2),
-            (27, 6, 3), (39, 6, 1),
-            (10, 2, 2), (26, 2, 3),
+            ( 5, 13, 1),
+            (15, 13, 2),
+            (20, 13, 1),
+            (32, 13, 3),
+            (48, 13, 2),
+            (66, 13, 1),
+            (78, 13, 3),
+            (20, 10, 2),
+            (60, 10, 1),
         ],
-    },
+    }
 }
 
-TILE_CHARS = {
-    "B": "tile_0011.png",
-    "F": "tile_0055.png",
-    "H": "tile_0033.png",
-    "S": "tile_0099.png",
-}
-WALL_TILES     = {"B"}
-PLATFORM_TILES = {"F", "H"}
-DECOR_TILES    = {"S"}
-
-_PLAYER_Y_OFFSET = (128 * CHARACTER_SCALING / 2) - (PHYS_H / 2)
-
-# Sprite-sheet x-offset correction
-# ─────────────────────────────────
-# For each animation state we shift player_sprite.center_x so that the
-# character's visible body always lands at physics.center_x, regardless of
-# which sprite sheet or facing direction is active.
-#
-# Formula:  x_off = (frame_centre – visual_centre_x) × scale
-# where visual_centre_x is measured from the LEFT of the 128-px frame.
-#
-#   Walk  right  visual_cx ≈ 58.2  →  x_off = (64–58.2)×2 = +11.6
-#   Walk  left   visual_cx ≈ 69.8  →  x_off = (64–69.8)×2 = –11.6  (flipped sheet)
-#   Idle  right  visual_cx ≈ 31.7  →  x_off = (64–31.7)×2 = +64.6
-#   Idle  left   visual_cx ≈ 96.3  →  x_off = (64–96.3)×2 = –64.6  (flipped sheet)
-#
-# This eliminates the snap on walk↔idle AND on direction switches.
 _ANIM_X_OFFSETS = {
-    "walk_right":  (64 - 58.2) * CHARACTER_SCALING,   # +11.6
-    "walk_left":  -(64 - 58.2) * CHARACTER_SCALING,   # -11.6
-    "idle_right":  (64 - 31.7) * CHARACTER_SCALING,   # +64.6
-    "idle_left":  -(64 - 31.7) * CHARACTER_SCALING,   # -64.6
-    # attacks / None → 0.0 (default)
+    "walk_right":  (64 - 58.2) * CHARACTER_SCALING,
+    "walk_left":  -(64 - 58.2) * CHARACTER_SCALING,
+    "idle_right":  (64 - 31.7) * CHARACTER_SCALING,
+    "idle_left":  -(64 - 31.7) * CHARACTER_SCALING,
 }
 
 
@@ -188,7 +188,9 @@ class MyGame(arcade.Window):
         self.player_sprite  = None
         self.physics_engine = None
         self.camera         = None
+        self.hud_camera     = None
         self.level_width    = 0
+        self.time_remaining = 60.0
         self.spawn_x = 0
         self.spawn_y = 0
 
@@ -204,7 +206,7 @@ class MyGame(arcade.Window):
         self.frame_counter = 0
         self.facing_right  = True
         self.attacking     = None
-        self.current_anim  = None   # tracks which texture group is ON SCREEN right now
+        self.current_anim  = None
 
         self.slash_draw = None
         self.music      = None
@@ -227,37 +229,38 @@ class MyGame(arcade.Window):
             arcade.play_sound(self.slash_draw, volume=15.0)
 
     def _load_sheet(self, filename, count):
-        sheet  = arcade.load_spritesheet(f"{SAMURAI_PATH}/{filename}")
-        frames = sheet.get_texture_grid(size=(128, 128), columns=count, count=count)
-        return frames, [t.flip_left_right() for t in frames]
+        try:
+            sheet  = arcade.load_spritesheet(f"{SAMURAI_PATH}/{filename}")
+            frames = sheet.get_texture_grid(size=(128, 128), columns=count, count=count)
+            return frames, [t.flip_left_right() for t in frames]
+        except Exception:
+            fallback = arcade.make_soft_circle_texture(64, arcade.color.RED)
+            return [fallback] * count, [fallback] * count
 
     def _load_slime_textures(self):
         for i in (1, 2, 3):
-            path  = SLIME_BASE / f"Slime{i}/Without_shadow/Slime{i}_Walk_without_shadow.png"
-            sheet = arcade.load_spritesheet(path)
-            all_frames = sheet.get_texture_grid(
-                size=(SLIME_FRAME_W, SLIME_FRAME_H), columns=8, count=32
-            )
-            walk_right = all_frames[:8]
-            walk_left  = [t.flip_left_right() for t in walk_right]
-            self.slime_textures[i] = (walk_right, walk_left)
+            try:
+                path  = SLIME_BASE / f"Slime{i}/Without_shadow/Slime{i}_Walk_without_shadow.png"
+                sheet = arcade.load_spritesheet(path)
+                all_frames = sheet.get_texture_grid(
+                    size=(SLIME_FRAME_W, SLIME_FRAME_H), columns=8, count=32
+                )
+                walk_right = all_frames[:8]
+                walk_left  = [t.flip_left_right() for t in walk_right]
+                self.slime_textures[i] = (walk_right, walk_left)
+            except Exception:
+                fallback = arcade.make_soft_circle_texture(16, arcade.color.BLUE)
+                self.slime_textures[i] = ([fallback], [fallback])
 
-    # ── Sprite position sync ────────────────────────────────────────────────
     def _sync_player_sprite(self):
-        """Align the visual sprite with the physics body.
-
-        Uses _ANIM_X_OFFSETS keyed on current_anim (updated by
-        _update_animation() just before this is called each frame) so the
-        offset and the texture always change on the same frame.
-        """
         x_off = _ANIM_X_OFFSETS.get(self.current_anim, 0.0)
+        y_off = (128 * CHARACTER_SCALING / 2) - (self.physics_sprite.height / 2)
         self.player_sprite.center_x = self.physics_sprite.center_x + x_off
-        self.player_sprite.center_y = self.physics_sprite.center_y + _PLAYER_Y_OFFSET
+        self.player_sprite.center_y = self.physics_sprite.center_y + y_off
 
-    # ── Level builder ────────────────────────────────────────────────────────
     def _build_level(self, map_grid):
         total_rows = len(map_grid)
-        spawn      = None
+        spawn = None
         for row_idx, row in enumerate(map_grid):
             for col_idx, char in enumerate(row):
                 if char == " ":
@@ -270,7 +273,20 @@ class MyGame(arcade.Window):
                 filename = TILE_CHARS.get(char)
                 if not filename:
                     continue
-                sprite = arcade.Sprite(f"{KENNEY_TILES}/{filename}", TILE_SCALE)
+                
+                try:
+                    sprite = arcade.Sprite(f"{KENNEY_TILES}/{filename}", TILE_SCALE)
+                except Exception:
+                    if char == "B":
+                        color = (139, 69, 19)      
+                    elif char == "F":
+                        color = (255, 105, 180)    
+                    else:
+                        color = (210, 105, 30)     
+                        
+                    sprite = arcade.SpriteSolidColor(int(TILE_SIZE), int(TILE_SIZE), color)
+                    sprite.color = color  
+                
                 sprite.center_x = x
                 sprite.center_y = y
                 if char in WALL_TILES:
@@ -357,8 +373,9 @@ class MyGame(arcade.Window):
             ex = col * TILE_SIZE + TILE_SIZE // 2
             floor_top = (total_rows - 1 - floor_row) * TILE_SIZE + TILE_SIZE
             ey = floor_top + int(SLIME_SCALE * SLIME_FOOT_OFFSET)
-            wr, wl = self.slime_textures[stype]
-            self.enemy_list.append(SlimeEnemy(ex, ey, wr, wl))
+            if stype in self.slime_textures:
+                wr, wl = self.slime_textures[stype]
+                self.enemy_list.append(SlimeEnemy(ex, ey, wr, wl))
 
         self.physics_sprite.center_x = self.spawn_x
         self.physics_sprite.center_y = self.spawn_y
@@ -378,14 +395,13 @@ class MyGame(arcade.Window):
         self.frame_counter = 0
         self.facing_right  = True
         self.attacking     = None
-        # Set current_anim explicitly so _sync_player_sprite applies the
-        # correct idle offset from the very first frame.
         self.current_anim  = "idle_right"
         self.player_sprite.texture = self.idle_textures_right[0]
         self._sync_player_sprite()
 
         self._death_panel          = self._build_death_panel()
         self._level_complete_panel = self._build_level_complete_panel()
+        self.time_remaining = 60.0
         self.game_state = "playing"
 
     def setup(self):
@@ -415,7 +431,8 @@ class MyGame(arcade.Window):
         self.player_sprite.scale   = CHARACTER_SCALING
         self.player_list.append(self.player_sprite)
 
-        self.camera = arcade.Camera2D()
+        self.camera     = arcade.Camera2D()
+        self.hud_camera = arcade.Camera2D()
 
         music = self._try_load_sound(HERE / "assets/music/balloons-forever.ogg")
         if music:
@@ -473,6 +490,19 @@ class MyGame(arcade.Window):
         self.platform_list.draw()
         self.decor_list.draw()
         self.player_list.draw()
+
+        self.hud_camera.use()
+        secs  = int(self.time_remaining)
+        label = f"{secs // 60}:{secs % 60:02d}"
+        if self.time_remaining <= 10:
+            timer_color = arcade.color.RED
+        elif self.time_remaining <= 20:
+            timer_color = arcade.color.ORANGE
+        else:
+            timer_color = arcade.color.WHITE
+        arcade.draw_text(label, self.width - 20, self.height - 20,
+                         timer_color, 36, anchor_x="right", anchor_y="top", bold=True)
+
         if self.game_state in ("dead", "level_complete"):
             self.ui_manager.draw()
 
@@ -521,12 +551,6 @@ class MyGame(arcade.Window):
             min(self.level_width - PHYS_W / 2, self.physics_sprite.center_x),
         )
 
-        # ── KEY ORDER: animation FIRST, then position sync ──────────────────
-        # _update_animation() decides which texture (idle vs walk) is on screen
-        # and updates self.current_anim.  _sync_player_sprite() then reads
-        # current_anim to apply the matching x-offset.  Doing it the other way
-        # round caused a 6-frame window where the offset changed but the texture
-        # hadn't switched yet, making the snap worse instead of better.
         self._update_animation()
         self._sync_player_sprite()
 
@@ -535,6 +559,12 @@ class MyGame(arcade.Window):
             return
         if self.physics_sprite.center_x >= self.level_width - TILE_SIZE * 2:
             self._trigger_level_complete()
+            return
+
+        self.time_remaining -= delta_time
+        if self.time_remaining <= 0.0:
+            self.time_remaining = 0.0
+            self._trigger_death()
             return
 
         screen_left  = self._cam_cx - self.width  / 2 - TILE_SIZE * 4
@@ -564,11 +594,13 @@ class MyGame(arcade.Window):
             frames = (self.attack_textures_right if self.facing_right
                       else self.attack_textures_left)[self.attacking]
             if self.cur_texture >= len(frames):
-                self.attacking    = None
-                self.cur_texture  = 0
-                # Reset current_anim so the idle/walk branch below runs next
-                # frame and sets the correct offset via _sync_player_sprite.
-                self.current_anim = None
+                self.attacking   = None
+                self.cur_texture = 0
+                is_walking = self.physics_sprite.change_x != 0
+                if self.facing_right:
+                    self.current_anim = "walk_right" if is_walking else "idle_right"
+                else:
+                    self.current_anim = "walk_left" if is_walking else "idle_left"
             else:
                 self.player_sprite.texture = frames[self.cur_texture]
             return
@@ -593,5 +625,3 @@ if __name__ == "__main__":
     window = MyGame()
     window.setup()
     arcade.run()
-    print("Goodbye!")
-    print("Thanks for playing Wok of the Warrior!")
