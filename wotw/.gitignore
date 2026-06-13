@@ -1,0 +1,6 @@
+# Player save data — not source
+saves.json
+
+# Python bytecode cache
+__pycache__/
+*.pyc
