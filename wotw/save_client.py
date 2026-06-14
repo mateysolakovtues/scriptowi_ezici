@@ -5,6 +5,7 @@ it falls back to reading/writing the same saves.json file the API uses, so
 progress is preserved either way.
 """
 import json
+import sys
 import threading
 import urllib.error
 import urllib.request
@@ -14,8 +15,14 @@ BASE_URL = "http://127.0.0.1:8000"
 PLAYER_ID = 1
 _TIMEOUT = 1.0
 
-# Same file api.py persists to, so HTTP and file fallback stay in sync.
-SAVES_FILE = Path(__file__).parent / "saves.json"
+# Save next to the source in dev, but to a writable user folder when packaged
+# (the PyInstaller bundle itself is read-only).
+if getattr(sys, "frozen", False):
+    _SAVE_DIR = Path.home() / ".wok_of_the_warrior"
+    _SAVE_DIR.mkdir(parents=True, exist_ok=True)
+    SAVES_FILE = _SAVE_DIR / "saves.json"
+else:
+    SAVES_FILE = Path(__file__).parent / "saves.json"
 
 
 # ----------------------------------------------------------------- HTTP path
