@@ -9,3 +9,6 @@ __pycache__/
 build/
 dist/
 *.log
+
+# REST server database
+wotw.db
