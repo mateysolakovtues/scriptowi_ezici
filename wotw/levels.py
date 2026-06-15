@@ -1,24 +1,41 @@
+# ===========================================================================
+# levels.py  —  the level designs.
+# ---------------------------------------------------------------------------
+# Each level is a dict with:
+#   "grid"       : a list of text rows describing the map (one letter = one tile)
+#   "enemies"    : list of (column, floor_row, slime_type) to spawn
+#   "boss_col"   : column to put the boss (only level 10), or None
+
+#   "burger_col" : column for the secret invincibility burger, or None
+#   "fake_walls" : passable walls hiding secrets
+#
+# game.py reads these and turns the letters into real sprites.
+#
+# Tile key (the letters used in a grid row):
+#   B = brown block (solid terrain)   F = pink platform   H = brown platform
+#   X = fake wall (looks solid, walk through)   P = player spawn   space = empty
+# The bottom three rows are one continuous floor; pillars and floating
+# platforms sit on top of it.
+# ===========================================================================
 from itertools import cycle
 
 
 def _make_grid(rows):
+    """Pad every row to the same length so the grid is a clean rectangle."""
     w = max(len(r) for r in rows)
     return [r.ljust(w) for r in rows]
 
 
-# Tile key:
-#   B = brown block (terrain)   F = pink cupcake platform   H = pink frosting solid
-#   P = player spawn
-# The bottom three rows are one continuous floor; pillars and floating
-# platforms sit on top of it.
-
-_GROUND = "B" * 88
+_GROUND = "B" * 88   # a full row of solid floor (88 tiles wide)
 
 # ---------------------------------------------------------------- level builder
-GRID_W      = 88
-GRID_H      = 16
-_GROUND_ROWS = (13, 14, 15)
-_SPAWN_ROW  = 12     # one row above the ground surface
+# Instead of typing out 16x88 grids by hand, _make_level() builds one from a
+# short description (where the pillars/platforms/spawn go). These say how big
+# the map is and which rows are what.
+GRID_W      = 88     # columns (width in tiles)
+GRID_H      = 16     # rows (height in tiles)
+_GROUND_ROWS = (13, 14, 15)   # the bottom 3 rows are the solid floor
+_SPAWN_ROW  = 12     # one row above the ground surface (where 'P' goes)
 _FLOOR_ROW  = 13     # ground surface row enemies stand on
 
 
@@ -33,36 +50,54 @@ def _make_level(pillars=(), platforms=(), spawn_col=2,
     Enemies are auto-placed on every pillar top, every platform, and the
     given ground columns, so they always stand on a real surface.
     """
+    # Start with an all-empty grid (spaces), then stamp things into it.
     grid = [[" "] * GRID_W for _ in range(GRID_H)]
+
+    # 1) lay the solid floor along the bottom rows
     for r in _GROUND_ROWS:
         for c in range(GRID_W):
             grid[r][c] = "B"
+    # 2) raise pillars up from the floor (height rows tall)
     for (col, width, height) in pillars:
         for h in range(height):
             for c in range(col, col + width):
                 grid[_SPAWN_ROW - h][c] = "B"
+    # 3) place floating platforms ('F' or 'H')
     for (row, col, width, kind) in platforms:
         for c in range(col, col + width):
             grid[row][c] = kind
+    # 4) place passable fake walls ('X') that hide secrets
     for (col, width, height) in fake_walls:
         for h in range(height):
             for c in range(col, col + width):
                 grid[_SPAWN_ROW - h][c] = "X"
+    # 5) mark the player's start tile
     grid[_SPAWN_ROW][spawn_col] = "P"
 
+    # Auto-place enemies on solid surfaces so none ever float in mid-air.
+    # `cycle(stypes)` repeats the slime-type list forever (1,2,3,1,2,3,...).
     cyc = cycle(stypes)
     enemies = []
-    for (col, width, height) in pillars:
+    for (col, width, height) in pillars:          # one on top of each pillar
         top = _SPAWN_ROW - (height - 1)
         enemies.append((col + width // 2, top, next(cyc)))
-    for (row, col, width, kind) in platforms:
+    for (row, col, width, kind) in platforms:     # one on each platform
         enemies.append((col + width // 2, row, next(cyc)))
-    for c in ground_enemy_cols:
+    for c in ground_enemy_cols:                   # plus any on the open ground
         enemies.append((c, _FLOOR_ROW, next(cyc)))
 
+    # Join each row of characters back into a string and return the level dict.
     return {"grid": ["".join(r) for r in grid], "enemies": enemies,
             "boss_col": boss_col, "burger_col": burger_col}
 
+
+# ===========================================================================
+# THE LEVELS THEMSELVES
+# ---------------------------------------------------------------------------
+# Levels 1 & 2 are written out as hand-drawn grids (you can literally see the
+# shapes). Levels 3-10 use the _make_level() builder above. Level 10 is the
+# finale with the boss and the secret burger.
+# ===========================================================================
 LEVELS = {
     1: {
         # Row 5  platforms: FFF @18-20, HHHH @40-43, FFFF @62-65
@@ -162,7 +197,8 @@ LEVELS = {
                    (8,   8, 4, "F"), (8,  26, 4, "H"), (8,  46, 4, "F"), (8,  66, 4, "H"),
                    (5,  18, 4, "F"), (5,  40, 4, "H"), (5,  62, 4, "F")],
         ground_enemy_cols=[4, 30, 52, 82],
-        stypes=(2, 3, 1),
+        # types 1-3 = slimes, 4-6 = fast monsters (mixed from level 4 on)
+        stypes=(1, 4, 2, 5, 3, 6),
     ),
 
     # 5 — Twin towers with a bridge of platforms between them.
@@ -170,7 +206,7 @@ LEVELS = {
         pillars=[(20, 10, 4), (58, 10, 4)],
         platforms=[(8, 38, 6, "F"), (5, 38, 6, "H")],
         ground_enemy_cols=[6, 14, 50, 82],
-        stypes=(3, 1, 2),
+        stypes=(2, 5, 3, 6, 1, 4),
     ),
 
     # 6 — Rolling bumps: lots of short pillars, two long platforms.
@@ -179,7 +215,7 @@ LEVELS = {
                  (46, 5, 1), (56, 4, 2), (66, 5, 1), (76, 5, 2)],
         platforms=[(8, 30, 5, "F"), (8, 60, 5, "H")],
         ground_enemy_cols=[4, 22, 42, 72],
-        stypes=(1, 3, 2),
+        stypes=(3, 6, 1, 4, 2, 5),
     ),
 
     # 7 — Sky bridges: long high platforms over a couple of pillars.
@@ -188,7 +224,7 @@ LEVELS = {
         platforms=[(8, 10, 8, "F"), (8, 38, 10, "H"), (8, 66, 8, "F"),
                    (5, 24, 8, "H"), (5, 50, 8, "F")],
         ground_enemy_cols=[4, 46, 82],
-        stypes=(2, 1, 3),
+        stypes=(1, 5, 2, 6, 3, 4),
     ),
 
     # 8 — Zigzag: tall/short pillars alternating, high platforms.
@@ -197,7 +233,7 @@ LEVELS = {
                  (50, 5, 3), (60, 5, 1), (70, 5, 3)],
         platforms=[(5, 15, 4, "F"), (5, 35, 4, "H"), (5, 55, 4, "F")],
         ground_enemy_cols=[4, 25, 45, 65, 82],
-        stypes=(3, 2, 1),
+        stypes=(2, 6, 3, 4, 1, 5),
     ),
 
     # 9 — Canyon: two huge towers with a climb of platforms in the middle.
@@ -206,7 +242,7 @@ LEVELS = {
         platforms=[(11, 30, 6, "F"), (8, 40, 6, "H"),
                    (5, 30, 6, "F"), (8, 50, 6, "F")],
         ground_enemy_cols=[6, 28, 60, 82],
-        stypes=(1, 2, 3),
+        stypes=(3, 4, 1, 5, 2, 6),
     ),
 
     # 10 — Finale: fight through to the boss ninja waiting at the end.
@@ -216,7 +252,7 @@ LEVELS = {
         platforms=[(8, 18, 4, "F"), (5, 32, 6, "H")],
         spawn_col=8,
         ground_enemy_cols=[34],
-        stypes=(3, 1, 2),
+        stypes=(5, 1, 3),
         boss_col=74,
         burger_col=1,
         fake_walls=[(0, 3, 3)],   # passable wall hiding the burger at the start
